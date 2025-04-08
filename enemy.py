@@ -1,6 +1,7 @@
 import pygame
 import random
-import math 
+import math
+from spritesheet import SpriteSheet
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, game):
@@ -23,12 +24,22 @@ class Enemy(pygame.sprite.Sprite):
 
         self.color = (55, 50, 255)
 
-        self.rect = pygame.rect.Rect(self.x, self.y, 20, 20)
+        self.spritesheet = SpriteSheet("images/enemy.png")
+        self.sprites = self.spritesheet.get_images(0,0,100,100,6)
+        self.image = self.sprites[0]
+
+        self.rect = self.image.get_rect()
         self.direction = (0, 0)
         self.hp = 2
+        self.frame = 0
+        self.frame_count = 0 
 
-    def update(self, player):
-        
+    def update(self, player, level):
+        self.frame_count += 1 
+        if self.frame_count % 5 == 0:
+            self.frame += 1 
+            if self.frame == len(self.sprites):
+                self.frame = 0
         self.target = player.rect.center
         distance = [
             self.target[0] - self.x,
@@ -37,9 +48,14 @@ class Enemy(pygame.sprite.Sprite):
         normalize = math.sqrt(distance[0]**2 + distance[1]**2)
         self.direction = [distance[0]/normalize, distance[1]/normalize]
 
-        self.x += self.direction[0]
-        self.y += self.direction[1]
+        self.x += (self.direction[0] * level.enemy_speed_multiplier)
+        self.y += (self.direction[1] * level.enemy_speed_multiplier)
         self.rect.topleft = (self.x, self.y)
     
     def draw(self, game):
         pygame.draw.rect(game.screen, self.color, self.rect)
+
+    def blit(self, game):
+        self.image = self.sprites[self.frame]
+        game.screen.blit(self.image, self.rect.topleft)
+        

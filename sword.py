@@ -1,13 +1,15 @@
 import pygame 
 import math 
-
+from spritesheet import SpriteSheet
 class Sword(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.settings = game.settings
         self.x = game.player.rect.centerx
         self.y = game.player.rect.centery
-
+        self.sprite_sheet = SpriteSheet("images/sword.png")
+        self.sprites = self.sprite_sheet.get_images(0,0,100,100,4)
+        self.image = self.sprites[0]
         self.rect_size = self.settings.SWORD_RECT_SIZE
         self.rect = pygame.Rect(self.x,self.y, self.rect_size[0], self.rect_size[1])
         self.color = (255, 0, 0)
@@ -35,6 +37,7 @@ class Sword(pygame.sprite.Sprite):
     
     def update(self, player):
         self.life_counter += 1
+        
         if math.fabs(self.direction[0]) < math.fabs(self.direction[1]):
             #target up or down
             if self.direction[1] > 0:

@@ -3,7 +3,7 @@ from settings import Settings
 settings = Settings()
 
 class SpriteSheet():
-    SS_GAP = 16
+    SS_GAP = 100 
     SS_REFERENCE = (0, 0)
     def __init__(self, file_name):
         self.sprite_sheet = pygame.image.load(file_name).convert_alpha()
@@ -20,7 +20,7 @@ class SpriteSheet():
     
     def get_images(self, xi, yi, width, height, number_of_frames):
         return [self.get_image(
-            xi + i*self.SS_GAP, 
+            xi + i*width, 
             yi, 
             width, 
             height) 

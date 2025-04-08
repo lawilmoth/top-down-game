@@ -1,10 +1,15 @@
 import pygame
+from spritesheet import SpriteSheet
 
 class Player:
     def __init__(self, game):
+        self.game = game
         self.settings = game.settings
-        
-        self.rect = pygame.Rect(0,0,15,15)
+        self.sprite_sheet = SpriteSheet("images/wilmoth.png")
+        self.sprites = self.sprite_sheet.get_images(0,0,100,100,4)
+        self.image = self.sprites[0]
+
+        self.rect = self.image.get_rect()
         self.color = (255, 0, 255)
 
         self.rect.center = game.rect.center
@@ -14,11 +19,20 @@ class Player:
         self.moving_right = False
         self.moving_up = False
         self.moving_down = False
+        self.frame = 0
 
     def draw(self, game):
+        
+
         pygame.draw.rect(game.screen, self.color, self.rect)
 
+    def blit(self, game):
+        self.image = self.sprites[self.frame]
+        game.screen.blit(self.image, self.rect.topleft)
+
     def update(self):
+        if self.game.frame_count % 5 == 0:
+            self.frame = (self.frame + 1) % len(self.sprites)
         if self.moving_down:
             self.y += self.settings.PLAYER_SPEED
         if self.moving_up:
