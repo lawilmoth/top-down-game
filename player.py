@@ -1,8 +1,10 @@
 import pygame
 from spritesheet import SpriteSheet
+from pygame.sprite import Sprite
 
-class Player:
+class Player(Sprite):
     def __init__(self, game):
+        super().__init__()
         self.game = game
         self.settings = game.settings
         self.sprite_sheet = SpriteSheet("images/wilmoth.png")
@@ -20,6 +22,7 @@ class Player:
         self.moving_up = False
         self.moving_down = False
         self.frame = 0
+        self.weapons = []
 
     def draw(self, game):
         

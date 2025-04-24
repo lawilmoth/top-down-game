@@ -25,14 +25,19 @@ class Enemy(pygame.sprite.Sprite):
         self.color = (55, 50, 255)
 
         self.spritesheet = SpriteSheet("images/enemy.png")
-        self.sprites = self.spritesheet.get_images(0,0,100,100,6)
+        self.sprites = self.spritesheet.get_images(0,0,100,100,11)
         self.image = self.sprites[0]
 
         self.rect = self.image.get_rect()
         self.direction = (0, 0)
-        self.hp = 2
+        self.hp = 4
         self.frame = 0
         self.frame_count = 0 
+        self.knock_back_value = 30
+
+    def knock_back(self, bullet):
+        self.x += bullet.direction[0] * self.knock_back_value
+        self.y += bullet.direction[1] * self.knock_back_value
 
     def update(self, player, level):
         self.frame_count += 1 
@@ -59,3 +64,15 @@ class Enemy(pygame.sprite.Sprite):
         self.image = self.sprites[self.frame]
         game.screen.blit(self.image, self.rect.topleft)
         
+
+
+
+class BigEnemy(Enemy):
+    def __init__(self, game):
+        super().__init__(game)
+        self.knock_back_value = 10
+        self.hp = 20
+        self.spritesheet = SpriteSheet("images/dude.png")
+
+        self.sprites = self.spritesheet.get_images(0,0,100,100,7)
+        self.image = self.sprites[0]

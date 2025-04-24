@@ -18,7 +18,17 @@ class Sword(pygame.sprite.Sprite):
 
         self.direction = self.get_direction(game)
 
+        self.left_images = []
+
+        if self.direction[0] < 0:
+            for sprite in self.sprites:
+                
+                self.left_images.append(pygame.transform.flip(sprite, True, False))
+
+            self.sprites = self.left_images
+
         self.life_counter = 0
+        self.frame = 0
 
     def get_direction(self, game):
         mouse_at_fire = pygame.mouse.get_pos()
@@ -34,9 +44,18 @@ class Sword(pygame.sprite.Sprite):
     def draw(self, game):
         pygame.draw.rect(game.screen, self.color, self.rect)
 
+    def blit(self, game):
+
+        game.screen.blit(self.image, self.rect.topleft)
+        
+
     
     def update(self, player):
+        if self.life_counter % 3 == 0:
+            self.frame = (self.frame + 1) % len(self.sprites)
+            self.image = self.sprites[self.frame]
         self.life_counter += 1
+
         
         if math.fabs(self.direction[0]) < math.fabs(self.direction[1]):
             #target up or down
