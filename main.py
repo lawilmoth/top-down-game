@@ -3,10 +3,10 @@ from settings import Settings
 from player import Player
 from bullet import Bullet
 from enemy import Enemy, BigEnemy
-from sword import Sword
+from sword import Sword, BigSword
 import random, time
 from level import Level
-from items import Blaster
+from items import Blaster, BigSwordItem
 
 class Game:
     frame_count = 0
@@ -43,9 +43,14 @@ class Game:
             self.screen.fill((0,0,0))
 
 
-            if self.frame_count % 4 == 0:   
-                self._fire_bullet()
-                #pass
+            if self.player.weapons["blaster"] > 0:
+                blaster_count = self.player.weapons["blaster"]
+               
+                if blaster_count >= 100:
+                    self._fire_bullet()
+                elif self.frame_count % (100 - blaster_count) <= 0: 
+                    self._fire_bullet()
+                    #pass
             for bullet in self.bullets.sprites():
                 if bullet.rect.left > self.settings.WIDTH or bullet.rect.right < 0:
                     bullet.kill()
@@ -74,7 +79,10 @@ class Game:
             self.frame_count +=1 
             
     def _swing_sword(self):
-        self.swords.add(Sword(self))
+        if self.player.weapons["big_sword"] >= 1:
+            self.swords.add(BigSword(self))
+        else:
+            self.swords.add(Sword(self))
 
     def _fire_bullet(self):
         self.bullets.add(Bullet(self))
@@ -145,20 +153,30 @@ class Game:
                 if enemy.hp <= 0:
                     self._handle_enemy_kill(enemy)
 
-        collisions = pygame.sprite.groupcollide(self.swords, self.enemies, False, True)
+        #Sword Damage
+        collisions = pygame.sprite.groupcollide(self.swords, self.enemies, False, False)
         if collisions:
-            number_of_enemies_killed = len(list(collisions.values())[0])
-            self.level.enemies_killed_this_round += number_of_enemies_killed
-            self.score += number_of_enemies_killed * game.level.enemy_points
+            enemies_hit = list(collisions.values())[0]
+            sword = list(collisions.keys())[0]
+            
+            for enemy in enemies_hit:
+                enemy.hp -= sword.damage
+                enemy.knock_back(list(collisions.keys())[0])
+                if enemy.hp <= 0:
+                    self._handle_enemy_kill(enemy)
         
-        pickeup_up_item = pygame.sprite.spritecollideany(self.player, self.items)
-        if pickeup_up_item:
-            pickeup_up_item.kill()
+        pickup_up_item = pygame.sprite.spritecollideany(self.player, self.items)
+        if pickup_up_item:
+            if pickup_up_item.name == "blaster" or pickup_up_item.name == "big_sword":
+                pickup_up_item.pickup(self.player)
 
 
     def _handle_enemy_kill(self, enemy):
         #Roll to drop a blaster
-        if random.random() > .1:
+        if random.random() > .99:
+            big_sword = BigSwordItem(enemy)
+            self.items.add(big_sword)
+        elif random.random() > .90:
             blaster = Blaster(enemy)
             self.items.add(blaster)
         enemy.kill()

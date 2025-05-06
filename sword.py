@@ -29,6 +29,7 @@ class Sword(pygame.sprite.Sprite):
 
         self.life_counter = 0
         self.frame = 0
+        self.damage = 1
 
     def get_direction(self, game):
         mouse_at_fire = pygame.mouse.get_pos()
@@ -75,3 +76,25 @@ class Sword(pygame.sprite.Sprite):
                 #target left
                 self.rect.right = player.rect.left
 
+
+
+
+class BigSword(Sword):
+    def __init__(self, game):
+        super().__init__(game)
+
+        self.sprite_sheet = SpriteSheet("images/big_sword_swing.png")
+        self.sprites = self.sprite_sheet.get_images(0,0,100,100,6)
+        self.image = self.sprites[0]
+
+        self.left_images = []
+
+        if self.direction[0] < 0:
+            for sprite in self.sprites:
+                
+                self.left_images.append(pygame.transform.flip(sprite, True, False))
+
+            self.sprites = self.left_images
+
+
+        self.damage = 5

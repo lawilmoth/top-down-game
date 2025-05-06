@@ -21,6 +21,7 @@ class Item(Sprite):
 class Blaster(Item):
     def __init__(self, enemy):
         super().__init__(enemy)
+        self.name = "blaster"
         self.spritesheet = SpriteSheet("images/blaster1.png")
         self.sprites = self.spritesheet.get_images(0,0,100,100,20)
         self.current_frame = 0
@@ -30,4 +31,22 @@ class Blaster(Item):
         self.rect.topleft = (self.x, self.y)
 
     def pickup(self, player):
-        player.weapons.append("blaster")
+        player.weapons["blaster"] += 1
+        self.kill()
+
+
+class BigSwordItem(Item):
+    def __init__(self, enemy):
+        super().__init__(enemy)
+        self.name = "big_sword"
+        self.spritesheet = SpriteSheet("images/sword-drop.png")
+        self.sprites = self.spritesheet.get_images(0,0,100,100,8)
+        self.current_frame = 0
+        self.image = self.sprites[self.current_frame]
+
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (self.x, self.y)
+
+    def pickup(self, player):
+        player.weapons["big_sword"] += 1
+        self.kill()

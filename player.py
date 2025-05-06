@@ -22,7 +22,10 @@ class Player(Sprite):
         self.moving_up = False
         self.moving_down = False
         self.frame = 0
-        self.weapons = []
+        self.weapons = {
+            "blaster" : 0,
+            "big_sword": 0
+        }
 
     def draw(self, game):
         
